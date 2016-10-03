@@ -1,6 +1,6 @@
 {
   "name": "@akitabox/aws_health_check",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Express middleware for responding to AWS health check requests",
   "main": "index.js",
   "scripts": {
