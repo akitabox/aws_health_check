@@ -62,7 +62,6 @@ function healthCheck(options) {
             },
             function(err) {
                 if (err) return next(err);
-                log('Health Check Passed');
                 return res.sendStatus(200);
             }
         )
