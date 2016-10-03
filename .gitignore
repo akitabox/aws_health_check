@@ -1,0 +1,9 @@
+.idea/*
+node_modules/*
+npm-debug.log
+.DS_Store
+logs/*
+_cache/*
+.tmp/*
+tmp/*
+public/bower_components/*
