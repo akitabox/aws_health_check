@@ -6,11 +6,13 @@ var _ = require('underscore');
 module.exports = healthCheck;
 
 /**
+ * Express middleware handling AWS Route53 or ELB health check requests. Optionally verifies the existence of local
+ * paths in determining application 'healthiness'.
  *
- * @param [options] {Object}
+ * @param [options] {Object}                         - optional configuration object
  * @param [options.path=/heartbeat] {String}         - health check url
  * @param [options.requiredLocalPaths=[]] {[String]} - array of local paths that must exist for the application to be 'healthy'
- * @param [options.debug=false] {Boolean}            - will console.log() messages if set to true
+ * @param [options.debug=false] {Boolean}            - will console.log() debug messages if set to true
  * @returns {Function} Returns Express middleware
  */
 function healthCheck(options) {
