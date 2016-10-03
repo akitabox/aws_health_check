@@ -11,7 +11,7 @@ Configure application health check requests in Route53 and ELB to ping `HTTP:300
 Example `app.js`
 ```
 var express = require('express');
-var awsHealthCheck = require('aws_health_check');
+var awsHealthCheck = require('@akitabox/aws_health_check');
 var app = express();
 
 // Respond to health check requests sent to this application

@@ -41,12 +41,12 @@ function healthCheck(options) {
             return next();
         } else if (req.method !== 'GET') {
             log('Health check requests should have method GET');
-            return res.send(405);
+            return res.sendStatus(405);
         }
 
         if (_.isEmpty(options.requiredLocalPaths)) {
             // Just send 200 if there are no local application paths to verify
-            return res.send(200);
+            return res.sendStatus(200);
         }
 
         // Verify that each of the required paths exist at the time of the health check request
@@ -62,7 +62,8 @@ function healthCheck(options) {
             },
             function(err) {
                 if (err) return next(err);
-                return res.send(200);
+                log('Health Check Passed');
+                return res.sendStatus(200);
             }
         )
     }
