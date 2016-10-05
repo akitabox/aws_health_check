@@ -13,10 +13,13 @@
   "keywords": [
     "AWS",
     "health",
-    "check"
+    "check",
+    "ELB",
+    "Load Balancer",
+    "Route 53"
   ],
   "author": "AkitaBot <info@akitabox.com> (http://home.akitabox.com)",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/akitabox/heartbeat/issues"
   },
