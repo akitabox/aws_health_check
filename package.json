@@ -4,7 +4,8 @@
   "description": "Express middleware for responding to AWS health check requests",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "pretest": "./node_modules/.bin/eslint index.js --fix",
+    "test": "echo \"No test specified\" && exit 0"
   },
   "repository": {
     "type": "git",
@@ -31,5 +32,9 @@
   },
   "peerDependencies": {
     "express": "4.x"
+  },
+  "devDependencies": {
+    "eslint": "^3.7.1",
+    "eslint-config-google": "^0.6.0"
   }
 }

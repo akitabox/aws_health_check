@@ -53,17 +53,17 @@ function healthCheck(options) {
         async.each(
             options.requiredLocalPaths,
             function (requiredLocalPath, eachCb) {
-                fs.stat(requiredLocalPath, function(err, stats) {
+                fs.stat(requiredLocalPath, function (err, stats) {
                     if (err) {
                         log('Health Check Failed: Invalid local path ' + requiredLocalPath);
                     }
                     return eachCb(err);
                 });
             },
-            function(err) {
+            function (err) {
                 if (err) return next(err);
                 return res.sendStatus(200);
             }
-        )
-    }
+        );
+    };
 }
