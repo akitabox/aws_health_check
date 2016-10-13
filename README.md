@@ -9,7 +9,7 @@ Express middleware for responding to AWS health check requests from Route53 and 
 Configure application health check requests in Route53 and ELB to ping `HTTP:3000/heartbeat`
 
 Example `app.js`
-```
+```javascript
 var express = require('express');
 var awsHealthCheck = require('@akitabox/aws_health_check');
 var app = express();
