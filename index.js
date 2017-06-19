@@ -1,32 +1,47 @@
-var fs = require('fs');
-var async = require('async');
-var parseUrl = require('parseurl');
-var _ = require('underscore');
+let fs = require('fs');
+let async = require('async');
+let parseUrl = require('parseurl');
+let _ = require('underscore');
 
-module.exports = healthCheck;
+// Whether or not this instance is healthy determines the
+// responses sent.
+let isHealthy = true;
 
 /**
- * Express middleware handling AWS Route53 or ELB health check requests. Optionally verifies the existence of local
- * paths in determining application 'healthiness'.
+ * Set the healthiness of this instance.
  *
- * @param [options] {Object}                         - optional configuration object
- * @param [options.path=/heartbeat] {String}         - health check url
- * @param [options.requiredLocalPaths=[]] {[String]} - array of local paths that must exist for the application to be 'healthy'
- * @param [options.debug=false] {Boolean}            - will console.log() debug messages if set to true
+ * @param status {Boolean}  `true` for healthy, `false` for unhealthy.
+ * @returns {undefined}
+ */
+function setHealthy(status) {
+    isHealthy = status;
+}
+
+/**
+ * Express middleware handling AWS Route53 or ELB health check requests.
+ * Optionally verifies the existence of local paths in determining
+ * application 'healthiness'.
+ *
+ * @param [options] {Object}    optional configuration object
+ * @param [options.path=/heartbeat] {String}    health check url
+ * @param [options.requiredLocalPaths=[]] {[String]}
+ *          Array of local paths that must exist for the application to
+ *          be 'healthy'. If this is either undefined or an empty array,
+ *          default to value set by setHealthy.
+ * @param [options.debug=false] {Boolean}   
+ *          Will console.log() debug messages if set to true
  * @returns {Function} Returns Express middleware
  */
-function healthCheck(options) {
-    if (!_.isObject(options)) {
-        options = {};
-    }
-
+function healthCheck(options = {}) {
     function log(data) {
-        if (_.isBoolean(options.debug) && options.debug) {
-            console.log(data);
-        }
+        if (!_.isBoolean(options.debug) || !options.debug) return;
+        console.log(data);
     }
 
-    if (!_.isString(options.path) || !options.path.length || !/^\//.test(options.path)) {
+    // Allow for custom routes
+    if (!_.isString(options.path) ||
+        !options.path.length ||
+        !options.path.startsWith('/')) {
         options.path = '/heartbeat';
         log('Using default health check route: ' + options.path);
     }
@@ -37,6 +52,10 @@ function healthCheck(options) {
     }
 
     return function heartbeat(req, res, next) {
+        if (options.requiredLocalPaths.length == 0) {
+            return res.sendStatus(isHealthy ? 200 : 503);
+        }
+
         if (parseUrl(req).pathname !== options.path) {
             return next();
         } else if (req.method !== 'GET') {
@@ -44,18 +63,15 @@ function healthCheck(options) {
             return res.sendStatus(405);
         }
 
-        if (_.isEmpty(options.requiredLocalPaths)) {
-            // Just send 200 if there are no local application paths to verify
-            return res.sendStatus(200);
-        }
-
-        // Verify that each of the required paths exist at the time of the health check request
+        // Verify that each of the required paths exist at the time of
+        // the health check request
         async.each(
             options.requiredLocalPaths,
             function (requiredLocalPath, eachCb) {
                 fs.stat(requiredLocalPath, function (err, stats) {
                     if (err) {
-                        log('Health Check Failed: Invalid local path ' + requiredLocalPath);
+                        log('Health Check Failed: ' +
+                            'Invalid local path ' + requiredLocalPath);
                     }
                     return eachCb(err);
                 });
@@ -67,3 +83,8 @@ function healthCheck(options) {
         );
     };
 }
+
+module.exports = {
+    middleware : healthCheck,
+    setHealthy : setHealthy
+};
