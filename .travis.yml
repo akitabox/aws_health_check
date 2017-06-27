@@ -4,10 +4,14 @@ node_js:
 before_install:
 - echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" > .npmrc
 script: npm test
+branches:
+  except:
+    - /^(v[0-9]*(\.[0-9]*){2})/
 cache:
   directories:
   - node_modules
 notifications:
+  email: false
   slack:
     rooms:
       secure: DmSF3JS/DW0gSRVlrWkMSxxZZMe1kHYZN3rpe8Jtu81G4ryej3lWf9c6kTa/x0Uv/40WUABU8bT3jyfJg9t3AdCthD5x5u7Mqrv9CjgkgUBT2u5Hs17pBC+ZtmzcTZoOmCmBPwEseymfMlirJIXe6oNFIHFpvAvOQu1i13gVTaGV3lC/Z+f0sGRru1UxZuolB3tg/IIethTltZE6DIRfqvjmnHPaCrO4oSsZRqRXyhY2h2mCsoMxOx1FF32AlWhCJ+naF5X33+p5Jwsv2sanpraSqSZpc03bSD269OiB5nYaZKL8aaxAqWxNU8gWcQUUnk00VK2Vb8MAjqR6lfroGOWLbD2TZfC3wrcvKqbXK5qcfZPBNJ2zkycK2X5ntXAsErZXd6SBfpAi4dFg4YWtr2Ux45GRKd/EiotwJLJ/JuRNwrX6CeEU4zC7+0TEnFnomtm8i9GQG2frEPkfO/pf+KXdIiwulze0TsR1pKgPmizVuXSuDMDd33mUGo/tpB9/Ypapqvt6IGxmdVgKTo8UFneD9qkP0N8mvZmBlbxwtSZgx4GwnOiMDU5SHmXZDYIWOgJJR3LncWGlQjFqKWOrUijkkZWA7ezoxUkBfL/Hlfv+kJI157Il3kgUik/g9PuXSa/3mMN6QL05oxhBduQRTjWmo5AoH6phRwgDm9GnMTQ=
