@@ -13,8 +13,22 @@ let isHealthy = true;
  * @param status {Boolean}  `true` for healthy, `false` for unhealthy.
  * @returns {undefined}
  */
-function setHealthy(status) {
+function setHealthyFlag(status) {
     isHealthy = status;
+}
+/**
+ * Removed the isHealthy=false healthiness override and allows it to report itself as healthy.
+ * Preferred over using setHealthyFlag when providing a callback to another service.
+ */
+function setHealthy() {
+    isHealthy = true;
+}
+/**
+ * Overrides the default healthiness and forces it to report unhealthy.
+ * Preferred over using setHealthyFlag when providing a callback to another service.
+ */
+function setUnhealthy() {
+    isHealthy = false;
 }
 
 /**
@@ -27,8 +41,8 @@ function setHealthy(status) {
  * @param [options.requiredLocalPaths=[]] {[String]}
  *          Array of local paths that must exist for the application to
  *          be 'healthy'. If this is either undefined or an empty array,
- *          default to value set by setHealthy.
- * @param [options.debug=false] {Boolean}   
+ *          default to value set by setHealthyFlag.
+ * @param [options.debug=false] {Boolean}
  *          Will console.log() debug messages if set to true
  * @returns {Function} Returns Express middleware
  */
@@ -52,7 +66,7 @@ function healthCheck(options = {}) {
     }
 
     return function heartbeat(req, res, next) {
-        if (options.requiredLocalPaths.length == 0) {
+        if (options.requiredLocalPaths.length === 0) {
             return res.sendStatus(isHealthy ? 200 : 503);
         }
 
@@ -78,7 +92,7 @@ function healthCheck(options = {}) {
             },
             function (err) {
                 if (err) return next(err);
-                return res.sendStatus(200);
+                return res.sendStatus(isHealthy ? 200 : 503);
             }
         );
     };
@@ -86,5 +100,7 @@ function healthCheck(options = {}) {
 
 module.exports = {
     middleware : healthCheck,
-    setHealthy : setHealthy
+    setHealthyFlag,
+    setHealthy,
+    setUnhealthy
 };
