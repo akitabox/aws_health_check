@@ -1,11 +1,19 @@
-let fs = require('fs');
-let async = require('async');
-let parseUrl = require('parseurl');
-let _ = require('underscore');
+const fs = require('fs');
+const async = require('async');
+const parseUrl = require('parseurl');
+const _ = require('underscore');
+const HEARTBEAT_ROUTE = '/heartbeat';
 
 // Whether or not this instance is healthy determines the
 // responses sent.
 let isHealthy = true;
+
+module.exports = {
+    middleware : healthCheck,
+    setHealthyFlag,
+    setHealthy,
+    setUnhealthy
+};
 
 /**
  * Set the healthiness of this instance.
@@ -56,7 +64,7 @@ function healthCheck(options = {}) {
     if (!_.isString(options.path) ||
         !options.path.length ||
         !options.path.startsWith('/')) {
-        options.path = '/heartbeat';
+        options.path = HEARTBEAT_ROUTE;
         log('Using default health check route: ' + options.path);
     }
 
@@ -66,15 +74,15 @@ function healthCheck(options = {}) {
     }
 
     return function heartbeat(req, res, next) {
-        if (options.requiredLocalPaths.length === 0) {
-            return res.sendStatus(isHealthy ? 200 : 503);
-        }
-
         if (parseUrl(req).pathname !== options.path) {
-            return next();
+            return next(); // Did not match the /heartbeat route. Fall through.
         } else if (req.method !== 'GET') {
             log('Health check requests should have method GET');
             return res.sendStatus(405);
+        }
+
+        if (options.requiredLocalPaths.length === 0) {
+            return res.sendStatus(isHealthy ? 200 : 503);
         }
 
         // Verify that each of the required paths exist at the time of
@@ -97,10 +105,3 @@ function healthCheck(options = {}) {
         );
     };
 }
-
-module.exports = {
-    middleware : healthCheck,
-    setHealthyFlag,
-    setHealthy,
-    setUnhealthy
-};
