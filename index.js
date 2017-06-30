@@ -18,11 +18,10 @@ module.exports = {
 /**
  * Set the healthiness of this instance.
  *
- * @param status {Boolean}  `true` for healthy, `false` for unhealthy.
- * @returns {undefined}
+ * @param {Boolean} [status=false]  `true` for healthy, `false` for unhealthy.
  */
 function setHealthyFlag(status) {
-    isHealthy = status;
+    isHealthy = !!status;
 }
 /**
  * Removed the isHealthy=false healthiness override and allows it to report itself as healthy.
