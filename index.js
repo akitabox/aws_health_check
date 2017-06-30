@@ -61,9 +61,7 @@ function healthCheck(options = {}) {
     }
 
     // Allow for custom routes
-    if (!_.isString(options.path) ||
-        !options.path.length ||
-        !options.path.startsWith('/')) {
+    if (!_.isString(options.path) || !options.path.length || !options.path.startsWith('/')) {
         options.path = HEARTBEAT_ROUTE;
         log('Using default health check route: ' + options.path);
     }
