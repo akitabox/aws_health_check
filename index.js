@@ -79,8 +79,13 @@ function healthCheck(options = {}) {
             return res.sendStatus(405);
         }
 
+        if (!isHealthy) {
+            log("Health Check Failed because the application claims it isn't healthy.");
+            return next(new Error());
+        }
+
         if (options.requiredLocalPaths.length === 0) {
-            return res.sendStatus(isHealthy ? 200 : 503);
+            return res.sendStatus(200);
         }
 
         // Verify that each of the required paths exist at the time of
@@ -98,7 +103,7 @@ function healthCheck(options = {}) {
             },
             function (err) {
                 if (err) return next(err);
-                return res.sendStatus(isHealthy ? 200 : 503);
+                return res.sendStatus(200);
             }
         );
     };
