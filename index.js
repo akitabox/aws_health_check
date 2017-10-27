@@ -3,7 +3,7 @@ const async           = require('async');
 const parseUrl        = require('parseurl');
 const _               = require('underscore');
 const HEARTBEAT_ROUTE = '/heartbeat';
-const log             = require('winston');
+const logger          = require('winston');
 
 // Whether or not this instance is healthy determines the
 // responses sent.
@@ -57,7 +57,7 @@ function setUnhealthy() {
 function healthCheck(options = {}) {
     function log(data) {
         if (!_.isBoolean(options.debug) || !options.debug) return;
-        log.info(data);
+        logger.info(data);
     }
 
     // Allow for custom routes
